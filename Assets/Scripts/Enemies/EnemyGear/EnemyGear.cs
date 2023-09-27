@@ -41,4 +41,11 @@ public class EnemyGear : MonoBehaviour
     {
         transform.position = Vector2.MoveTowards(transform.position , Point2.position , moveDuration);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Player") 
+        // Debug.Log("deteced");
+            LevelManager.instance.isPlayerDead = true;
+    }
 }
