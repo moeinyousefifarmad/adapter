@@ -30,8 +30,8 @@ public class PlayerController : MonoBehaviour
         Move();
         if(!IsOnGround() && Input.GetKeyDown(KeyCode.S)) MoveDown(); 
         if (IsOnGround() && Input.GetButtonDown("Jump")) Jump();
-        if (Input.GetKeyDown(KeyCode.LeftShift)) isDashing = true;
-        if (isDashing) Dash();
+       // if (Input.GetKeyDown(KeyCode.LeftShift)) isDashing = true;
+       // if (isDashing) Dash();
     }
     private void Move()
     {
