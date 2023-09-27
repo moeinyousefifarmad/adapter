@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-
+    
     private void Update()
     {
         if(isPlayerDead)

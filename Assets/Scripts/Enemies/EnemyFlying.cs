@@ -20,6 +20,7 @@ public class EnemyFlying : MonoBehaviour
     [SerializeField] Transform PatrolPoint;
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private int Health;
+    [SerializeField] private float limitPower;
     private state currentState;
     private float freezingTimer;
     private float takeDamageEffectTimer;
@@ -28,6 +29,10 @@ public class EnemyFlying : MonoBehaviour
     {
         currentState = state.OnPatrolling;
     }
+
+
+
+
     private void Update()
     {
         if(currentState == state.OnPatrolling)
@@ -68,8 +73,16 @@ public class EnemyFlying : MonoBehaviour
 
         if(Health == 0)
             Destroy(gameObject);
-  
+
+
+        //Debug.Log(GameObject.Find("Mobile").GetComponent<Rigidbody2D>().velocity);
+                            
     }
+
+
+
+
+
     private void MoveToPlayer()
     {
         transform.position = Vector2.MoveTowards(transform.position ,
@@ -80,8 +93,14 @@ public class EnemyFlying : MonoBehaviour
         if(other.gameObject.tag == "Player") LevelManager.instance.isPlayerDead = true;
         else if(other.gameObject.tag == "Mobile" && currentState != state.OnTakingDamage)
         {
-            currentState = state.OnTakingDamage;
-            Health--;
+            if(GameObject.Find("Mobile").GetComponent<Rigidbody2D>().velocity.x > limitPower ||
+            GameObject.Find("Mobile").GetComponent<Rigidbody2D>().velocity.x < -limitPower 
+            || GameObject.Find("Mobile").GetComponent<Rigidbody2D>().velocity.y > limitPower ||
+            GameObject.Find("Mobile").GetComponent<Rigidbody2D>().velocity.y < -limitPower)
+            {
+                currentState = state.OnTakingDamage;
+                Health--;
+            }
         }
     }
     private void TakeDamage()
