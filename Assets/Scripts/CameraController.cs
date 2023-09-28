@@ -8,7 +8,6 @@ public class CameraController : MonoBehaviour
         idle,
         isShaking
     }
-    public static CameraController instance;
     [SerializeField] private float shakeDuration;
     [SerializeField] private float shakeIntensity;
     [SerializeField] private Vector2 size;
@@ -20,12 +19,6 @@ public class CameraController : MonoBehaviour
     private state currentState;
     private void Awake()
     {
-        if(instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(instance);
-        }
-        else Destroy(gameObject);
 
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
         multiChannel = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();

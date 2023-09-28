@@ -15,11 +15,13 @@ public class EnemyCrusher : MonoBehaviour
     [SerializeField] private float freezingDuration;
     private float freezingTimer;
     private bool isGroundDetected;
+    private CameraController cameraController;
     private state currentState;
 
     private void Start()
     {
         currentState = state.PullingBackState;
+        cameraController = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
     }
     private void Update()
     {
@@ -34,7 +36,7 @@ public class EnemyCrusher : MonoBehaviour
             if(transform.position == FinnalPoint.position)
             {
                 currentState = state.FreezingState;
-                CameraController.instance.needShake = true;
+                cameraController.needShake = true;
             } 
         }
         if(currentState == state.FreezingState)
