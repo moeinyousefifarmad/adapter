@@ -28,7 +28,6 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         if(IsCrusherDetected())
-        Debug.Log("hello");
         if(currentState == state.idle)
         {
             if(needShake && IsCrusherDetected()) currentState = state.isShaking;

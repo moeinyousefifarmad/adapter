@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class EnemyGear : MonoBehaviour
@@ -8,6 +6,7 @@ public class EnemyGear : MonoBehaviour
     [SerializeField] private float moveDuration;
     [SerializeField] private Transform Point1;
     [SerializeField] private Transform Point2;
+    [SerializeField] private float rotationSpeed;
     private bool canMoveTo1;
     private bool canMoveTo2;
     
@@ -19,6 +18,7 @@ public class EnemyGear : MonoBehaviour
 
     private void Update()
     {
+        Rotate();
 
         if(transform.position == Point1.position)
         {
@@ -44,8 +44,13 @@ public class EnemyGear : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Player") 
+        if(other.gameObject.tag == "Player" || other.gameObject.tag == "Mobile") 
         // Debug.Log("deteced");
             LevelManager.instance.isPlayerDead = true;
+    }
+
+    private void Rotate()
+    {
+        transform.Rotate(Vector3.forward , rotationSpeed);
     }
 }
