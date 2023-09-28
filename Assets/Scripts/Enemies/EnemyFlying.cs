@@ -24,7 +24,15 @@ public class EnemyFlying : MonoBehaviour
     private state currentState;
     private float freezingTimer;
     private float takeDamageEffectTimer;
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb2d;
     
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        rb2d = GetComponent<Rigidbody2D>();
+    }
     private void Start()
     {
         currentState = state.OnPatrolling;
@@ -35,6 +43,8 @@ public class EnemyFlying : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(rb2d.velocity.x);
+        Flip();
         if(currentState == state.OnPatrolling)
         {
             
@@ -122,5 +132,11 @@ public class EnemyFlying : MonoBehaviour
     private void MoveToPatrolPoint()
     {
         transform.position = Vector2.MoveTowards(transform.position , PatrolPoint.position , speed);
+    }
+
+    private void Flip()
+    {
+        if(rb2d.velocity.x > 0 ) spriteRenderer.flipX = false;
+        else if (rb2d.velocity.x < 0) spriteRenderer.flipX = true;
     }
 }
