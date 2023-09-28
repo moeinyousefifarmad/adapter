@@ -191,7 +191,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   Health: 3
-  limitPower: 20
+  limitPower: 10
 --- !u!50 &4405976506700001981
 Rigidbody2D:
   serializedVersion: 4

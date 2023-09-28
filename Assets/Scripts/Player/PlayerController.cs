@@ -3,36 +3,100 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    private enum State{
+        idle,
+        run,
+        jump,
+        fall,
+        takeDamage
+    }
     [SerializeField] private float speed;
     [SerializeField] private float jumpPower;
-    [SerializeField] private float dashSpeed;
-    [SerializeField] private float dashDuration;
     [SerializeField] private float downSpeed;
 
     [SerializeField] private Transform groundCheckPos;
     [SerializeField] private float groundCheckRayDistance;
     [SerializeField] private LayerMask groundLayer;
 
-    private float dashTimer;
-    private bool isDashing;
     private Rigidbody2D rb2d;
     private SpriteRenderer spriteRenderer;
-
+    private Animator animator;
+    private State currentState;
     private void Awake()
     {
+        currentState = State.idle;
+        animator = GetComponentInChildren<Animator>();
         spriteRenderer = GetComponentsInChildren<SpriteRenderer>()[0];
         rb2d = GetComponent<Rigidbody2D>();
+
     }
 
     private void Update()
     {
         Flip();
-        Move();
-        if(!IsOnGround() && Input.GetKeyDown(KeyCode.S)) MoveDown(); 
-        if (IsOnGround() && Input.GetButtonDown("Jump")) Jump();
-       // if (Input.GetKeyDown(KeyCode.LeftShift)) isDashing = true;
-       // if (isDashing) Dash();
+
+        if(currentState == State.idle)
+        {
+            if(Input.GetAxisRaw("Horizontal") != 0) currentState = State.run;
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                Jump();
+                currentState = State.jump;
+                animator.SetBool("IsJump" , true);
+            }
+
+           // Debug.Log(currentState);
+        }
+
+        if(currentState == State.run)
+        {
+            animator.SetBool("IsRun" , true);
+            Move();
+            if(Input.GetAxisRaw("Horizontal") == 0)
+            {
+                currentState = State.idle;
+                animator.SetBool("IsRun" , false);
+                animator.SetBool("IsIdle" , true);
+            }
+            if(Input.GetKeyDown(KeyCode.Space) && IsOnGround())
+            {
+                Jump();
+                currentState = State.jump;
+                animator.SetBool("IsRun" , false);
+                animator.SetBool("IsJump" , true);
+            }
+//Debug.Log(currentState);
+        }
+
+        if(currentState == State.jump)
+        {
+            Move();
+            animator.SetFloat("yVelocity" , rb2d.velocity.y);
+            if(rb2d.velocity.y < 0)
+            {
+                currentState = State.fall;
+                animator.SetFloat("yVelocity" , rb2d.velocity.y);
+            }
+           // Debug.Log(currentState);
+        }
+
+        if(currentState == State.fall)
+        {
+            animator.SetFloat("yVelocity" , rb2d.velocity.y);
+            Move();
+            if(IsOnGround())
+            {
+                 Debug.Log("ground detected");
+                currentState = State.idle;
+                animator.SetBool("IsJump" , false);
+                animator.SetBool("IsIdle" , true);
+            }
+        }
+
     }
+
+
     private void Move()
     {
         rb2d.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * speed , rb2d.velocity.y);
@@ -45,21 +109,6 @@ public class PlayerController : MonoBehaviour
 
     private bool IsOnGround() => Physics2D.Raycast(groundCheckPos.position , Vector2.down , groundCheckRayDistance , groundLayer);
 
-    private void Dash()
-    {
-        dashTimer += Time.deltaTime;
-        if(dashTimer < dashDuration)
-        {
-            if (!spriteRenderer.flipX)  rb2d.velocity = new Vector2(dashSpeed , 0);            
-            else if (spriteRenderer.flipX) rb2d.velocity = new Vector2(-dashSpeed , 0);
-        } 
-        else 
-        {
-            dashTimer = 0;
-            isDashing = false;
-        } 
-
-    }
 
     private void Flip()
     {
@@ -67,8 +116,8 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetAxisRaw("Horizontal") < 0) spriteRenderer.flipX = true;
     }
 
-    private void MoveDown()
-    {
-        rb2d.velocity = new Vector2(rb2d.velocity.x , -downSpeed);
-    }
+    // private void MoveDown()
+    // {
+    //     rb2d.velocity = new Vector2(rb2d.velocity.x , -downSpeed);
+    // }
 }
